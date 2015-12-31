@@ -1,0 +1,28 @@
+body {
+    padding: 50px;
+    font: 14px Arial, sans-serif;
+}
+
+a {
+    color: #ddb7ff;
+}
+
+#content {
+    width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#room {
+    background:#ddd;
+    margin-bottom: 1em;
+}
+
+#messages {
+    width: 690px;
+    height: 300px;
+    overflow: auto;
+    background: #eee;
+    margin-bottom: 1em;
+    margin-right: 10px;
+}
