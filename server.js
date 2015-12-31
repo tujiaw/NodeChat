@@ -22,8 +22,10 @@ function sendFile(response, filePath, fileContents) {
 
 function serveStatic(response, cache, absPath) {
     if (cache[absPath]) {
+        console.log('111:' + absPath);
         sendFile(response, absPath, cache[absPath]);
     } else {
+        console.log('222:' + absPath);
         fs.exists(absPath, function(exists) {
             if (exists) {
                 fs.readFile(absPath, function(err, data) {
