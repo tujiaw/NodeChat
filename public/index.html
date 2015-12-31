@@ -8,8 +8,9 @@
 <body>
     <div id="content">
         <div id="room"></div>
+        <div id="room-list"></div>
         <div id="messages"></div>
-        <form id="send-form">
+        <form id="send-form" onsubmit="return false;">  <!-- 阻止表单 -->
             <input id="send-message" />
             <input id="send-button" type="submit" value="Send" />
 
