@@ -8,28 +8,16 @@ a {
 }
 
 #content {
-    width: 800px;
     margin-left: auto;
     margin-right: auto;
 }
 
-#room {
-    background:#ddd;
-    margin-bottom: 1em;
-}
-
 #messages {
-    width: 690px;
-    height: 300px;
+    height: 400px;
     overflow: auto;
-    background: #eee;
-    margin-bottom: 1em;
-    margin-right: 10px;
 }
 
 #room-list {
-    float: right;
-    width: 100px;
     height: 300px;
     overflow: auto;
 }
@@ -42,12 +30,21 @@ a {
     background: #ddd;
 }
 
-#send-message {
-    width: 700px;
-    margin-bottom: 1em;
-    margin-right: 1em;
-}
-
 #help {
     font: 10px Arial, sans-serif;
+}
+
+.msg {
+    margin-bottom: 6px;
+}
+.sys-msg {
+    color: #F06600;
+}
+
+.show-send-msg {
+    color: #4A4A4A;
+}
+
+.show-received-msg {
+    color: #199BA4;
 }

@@ -10,58 +10,74 @@ function log(msg) {
 }
 
 function divEscapedContentElement(message) {
-    return $('<div></div>').text(message);
+    return $('<div class="msg show-send-msg"></div>').text(message);
 }
 
 function divSystemContentElement(message) {
-    return $('<div></div>').html('<i>' + message + '</i>');
+    return $('<div class="msg sys-msg"></div>').html(message);
+}
+
+function divRoomListItemElement(message) {
+    return $('<a href="#" class="list-group-item"></a>').text(message);
 }
 
 function processUserInput(chatApp, socket) {
     var message = $('#send-message').val();
+    processSysCommand(chatApp, socket, message);
+}
+
+function processSysCommand(chatApp, socket, message) {
+    if (message.length == 0) {
+        return;
+    }
     if (message[0] == '/') {
         var systemMessage = chatApp.processCommand(message);
         if (systemMessage) {
             $('#messages').append(divSystemContentElement(systemMessage));
         }
     } else {
-        chatApp.sendMessage($('#room').text(), message);
-        $('#messages').append(divEscapedContentElement(message));
+        chatApp.sendMessage($('#roomname').text(), message);
+        var sendMsg = $('#username').text() + '：' + message;
+        $('#messages').append(divEscapedContentElement(sendMsg));
         $('#messages').scrollTop($('#messages').prop('scrollHeight'));
     }
     $('#send-message').val('');
 }
 
 var socket = io.connect();
+var commandList = [];
 $(document).ready(function() {
    var chatApp = new Chat(socket);
 
     socket.on('nameResult', function(result) {
         var message;
         if (result.success) {
-            message = 'You are now known as ' + result.name + '.';
+            message = '您当前的用户名为：' + result.name + '.';
         } else {
             message = result.message;
         }
+        $('#username').text(result.name);
         $('#messages').append(divSystemContentElement(message));
     });
 
     socket.on('joinResult', function(result) {
-        $('#room').text(result.room);
-        $('#messages').append(divSystemContentElement('Current room changed.'));
+        $('#roomname').text(result.room);
+        $('#messages').append(divSystemContentElement(`您加入了聊天室：${result.room}`));
     });
 
     socket.on('message', function(message) {
-        var newElement = $('<div></div>').text(message.text);
+        var newElement = $('<div class="msg show-received-msg"></div>').text(message.text);
         $('#messages').append(newElement);
         $('#messages').scrollTop($('#messages').prop('scrollHeight'));
     });
 
     socket.on('rooms', function(rooms) {
-        $('#room-list').empty();
+        $('ul.command-list').empty();
+        $('ul.command-list').append(`<li><a href="#" id="modify-username">修改用户名</a></li>`)
+        $('ul.command-list').append(`<li role="separator" class="divider"></li>`)
 
         for (var i=0; i<rooms.length; i++) {
-            $('#room-list').append(divEscapedContentElement(rooms[i]));
+            $('ul.command-list').append(`<li><a href="#">${rooms[i]}</a></li>`)
         }
 
         $('#room-list div').click(function () {
@@ -80,4 +96,12 @@ $(document).ready(function() {
         $('#send-message').focus();
         return false;
     });
+
+    $('ul.command-list').on('click', "#modify-username", function() {
+        var newName = prompt('请输入新的用户名');
+        if (newName != null) {
+            processSysCommand(chatApp, socket, `/nick ${newName}`);
+        }
+        $('#send-message').focus();
+    })
 });

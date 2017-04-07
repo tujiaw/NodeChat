@@ -21,6 +21,6 @@
   "homepage": "https://github.com/tujiaw/NodeChat#readme",
   "dependencies": {
     "mime": "^1.3.4",
-    "socket.io": "^1.3.7"
+    "socket.io": "^1.7.3"
   }
 }
