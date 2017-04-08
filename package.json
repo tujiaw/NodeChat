@@ -4,7 +4,8 @@
   "description": "my chat",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "node server.js",
+    "start": "pm2 start ./server.js --name 'NodeChat'"
   },
   "repository": {
     "type": "git",
