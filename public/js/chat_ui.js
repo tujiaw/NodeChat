@@ -71,24 +71,13 @@ $(document).ready(function() {
         $('#messages').scrollTop($('#messages').prop('scrollHeight'));
     });
 
-    socket.on('rooms', function(rooms) {
-        $('ul.command-list').empty();
-        $('ul.command-list').append(`<li><a href="#" id="modify-username">修改用户名</a></li>`)
-        $('ul.command-list').append(`<li role="separator" class="divider"></li>`)
+    socket.on('onlineCount', function(result) {
+        $('#online-count').text(result.onlineCount);
+    })
 
-        for (var i=0; i<rooms.length; i++) {
-            $('ul.command-list').append(`<li><a href="#">${rooms[i]}</a></li>`)
-        }
-
-        $('#room-list div').click(function () {
-            chatApp.processCommand('/join ' + $(this).text());
-            $('#send-message').focus();
-        });
-    });
-
-    setInterval(function() {
-        socket.emit('rooms');
-    }, 1000);
+    // setInterval(function() {
+    //     socket.emit('rooms');
+    // }, 1000);
 
     $('#send-message').focus();
     $('#send-form').submit(function() {
