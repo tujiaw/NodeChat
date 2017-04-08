@@ -14,11 +14,6 @@ function padLeft(num, n) {
     return y.substr(y.length - n);
 }
 
-function processUserInput(chatApp, socket) {
-    var message = $('#send-message').val();
-    processSysCommand(chatApp, socket, message);
-}
-
 function formatDate(d) {
     var month = padLeft(d.getMonth() + 1, 2);
     var date = padLeft(d.getDate(), 2);
@@ -30,6 +25,12 @@ function formatDate(d) {
 
 var prevDate = new Date();
 prevDate.setFullYear(2016);
+
+function processUserInput(chatApp, socket) {
+    var message = $('#send-message').val();
+    processSysCommand(chatApp, socket, message);
+}
+
 // "send", "receive", "system"
 function appendMessage(message, type) {
     var curDate = new Date();
@@ -74,9 +75,19 @@ $(document).ready(function() {
     var socket, chatApp;
     var commandList = [];
 
-    function startChat() {
+    function initChat(name) {
         socket = io.connect();
         chatApp = new Chat(socket);
+        socket.emit('initJoin', name);
+        socket.on('initJoinResponse', function(result) {
+            if (result.success) {
+                $('#mask').hide();
+                $('#send-message').focus();
+                $('#username').text(name);
+            } else {
+                alert(result.message);
+            }
+        })
         socket.on('nameResult', function(result) {
             var message;
             if (result.success) {
@@ -102,28 +113,24 @@ $(document).ready(function() {
         });
     }
 
-    // setInterval(function() {
-    //     socket.emit('rooms');
-    // }, 1000);
-
+    // 发送消息
     $('#send-form').submit(function() {
         processUserInput(chatApp, socket);
         $('#send-message').focus();
         return false;
     });
 
+    // 给自己取一个响亮的名字
     $('#input-name').focus();
     $('#input-name').bind('keydown', function(event) {
         if (event.keyCode != '13') {
             return;
         }
-        startChat();
         var newName = $(this).val();
-        processSysCommand(chatApp, socket, `/nick ${newName}`);
-        $('#mask').hide();
-        $('#send-message').focus();
+        initChat(newName);
     })
 
+    // 修改用户名
     $('ul.command-list').on('click', "#modify-username", function() {
         var newName = prompt('请输入新的用户名');
         if (newName != null) {
