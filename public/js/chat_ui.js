@@ -70,45 +70,59 @@ function processSysCommand(chatApp, socket, message) {
     $('#send-message').val('');
 }
 
-var socket = io.connect();
-var commandList = [];
 $(document).ready(function() {
-   var chatApp = new Chat(socket);
-   
-   socket.on('nameResult', function(result) {
-        var message;
-        if (result.success) {
-            message = '您当前的用户名为：' + result.name;
-        } else {
-            message = result.message;
-        }
-        $('#username').text(result.name);
-        appendMessage(message, 'system');
-    });
+    var socket, chatApp;
+    var commandList = [];
 
-    socket.on('joinResult', function(result) {
-        $('#roomname').text(result.room);
-        appendMessage('您加入了聊天室', 'system');
-    });
+    function startChat() {
+        socket = io.connect();
+        chatApp = new Chat(socket);
+        socket.on('nameResult', function(result) {
+            var message;
+            if (result.success) {
+                message = '您当前的用户名为：' + result.name;
+            } else {
+                message = result.message;
+            }
+            $('#username').text(result.name);
+            appendMessage(message, 'system');
+        });
 
-    socket.on('message', function(message) {
-        appendMessage(message.text, message.type);
-    });
+        socket.on('joinResult', function(result) {
+            $('#roomname').text(result.room);
+            appendMessage('您加入了聊天室', 'system');
+        });
 
-    socket.on('onlineCount', function(result) {
-        $('#online-count').text(result.onlineCount);
-    })
+        socket.on('message', function(message) {
+            appendMessage(message.text, message.type);
+        });
+
+        socket.on('onlineCount', function(result) {
+            $('#online-count').text(result.onlineCount);
+        });
+    }
 
     // setInterval(function() {
     //     socket.emit('rooms');
     // }, 1000);
 
-    $('#send-message').focus();
     $('#send-form').submit(function() {
         processUserInput(chatApp, socket);
         $('#send-message').focus();
         return false;
     });
+
+    $('#input-name').focus();
+    $('#input-name').bind('keydown', function(event) {
+        if (event.keyCode != '13') {
+            return;
+        }
+        startChat();
+        var newName = $(this).val();
+        processSysCommand(chatApp, socket, `/nick ${newName}`);
+        $('#mask').hide();
+        $('#send-message').focus();
+    })
 
     $('ul.command-list').on('click', "#modify-username", function() {
         var newName = prompt('请输入新的用户名');
