@@ -13,21 +13,8 @@ a {
 }
 
 #messages {
-    height: 400px;
+    height: 500px;
     overflow: auto;
-}
-
-#room-list {
-    height: 300px;
-    overflow: auto;
-}
-
-#room-list div {
-    border-bottom: 1px solid #eee;
-}
-
-#room-list div:hover {
-    background: #ddd;
 }
 
 #help {
@@ -39,12 +26,19 @@ a {
 }
 .sys-msg {
     color: #F06600;
+    text-align: center;
 }
 
 .show-send-msg {
     color: #4A4A4A;
+    text-align: right;
 }
 
-.show-received-msg {
+.show-receive-msg {
     color: #199BA4;
+}
+
+.date-msg {
+    color: #4A4A4A;
+    text-align: center;
 }
