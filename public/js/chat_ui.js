@@ -123,8 +123,7 @@ $(document).ready(function() {
         return false;
     });
 
-    // 给自己取一个响亮的名字
-    $('#input-name').focus();
+    /////////////////给自己取一个响亮的名字///////////////
     $('#input-name').bind('keydown', function(event) {
         if (event.keyCode != '13') {
             return;
@@ -134,6 +133,8 @@ $(document).ready(function() {
     $('#go').on('click', function() {
         initChat($('#input-name').val());
     });
+    $('#input-name').focus();
+    ////////////////////////////////////////////////////
 
     // 修改用户名
     $('ul.command-list').on('click', "#modify-username", function() {
