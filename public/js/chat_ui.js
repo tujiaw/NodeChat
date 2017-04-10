@@ -133,7 +133,6 @@ $(document).ready(function() {
     $('#go').on('click', function() {
         initChat($('#input-name').val());
     });
-    $('#mask').focus();
     $('#input-name').focus();
     ////////////////////////////////////////////////////
 
