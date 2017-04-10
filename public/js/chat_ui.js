@@ -76,6 +76,9 @@ $(document).ready(function() {
     var commandList = [];
 
     function initChat(name) {
+        if (name.length === 0) {
+            return;
+        }
         socket = io.connect();
         chatApp = new Chat(socket);
         socket.emit('initJoin', name);
@@ -126,9 +129,11 @@ $(document).ready(function() {
         if (event.keyCode != '13') {
             return;
         }
-        var newName = $(this).val();
-        initChat(newName);
-    })
+        initChat($(this).val());
+    });
+    $('#go').on('click', function() {
+        initChat($('#input-name').val());
+    });
 
     // 修改用户名
     $('ul.command-list').on('click', "#modify-username", function() {
