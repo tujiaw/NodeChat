@@ -41,14 +41,20 @@ function appendMessage(message, type) {
     }
 
     if (type === 'send') {
-        var sendMsg = message + '：[' + $('#username').text() + ']';
-        $('#messages').append($('<div class="msg show-send-msg"></div>').text(sendMsg));
+        var html = ejs.render($('#right-message-template').html(), {
+            name: $('#username').text(),
+            content: message
+        });
+        $('#messages').append(html);
     } else if (type === 'receive') {
         var strList = message.split('：');
         if (strList.length > 1) {
-            strList[0] = `[${strList[0]}]`;
+            var html = ejs.render($('#left-message-template').html(), {
+                name: strList[0],
+                content: strList[1]
+            });
+            $('#messages').append(html);
         }
-        $('#messages').append($('<div class="msg show-receive-msg"></div>').text(strList.join('：')));
     } else if (type === 'system') {
         $('#messages').append($('<div class="msg sys-msg"></div>').text(message));
     }

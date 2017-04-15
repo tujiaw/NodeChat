@@ -7,6 +7,42 @@
     <title>Room Chat</title>
     <link href="//cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/style.css" />
+    <script id="left-message-template" type="text/template">
+        <div class="left-message-row">
+            <div class="avatar">
+                <div class="avatar-img">
+                    <img src="/img/myavatar.jpg" alt="">
+                </div>
+                <div class="avatar-name">
+                    <span><%= name %></span>
+                </div>
+            </div>
+            <div class="message">
+                <div class="left-direction"></div>
+                <div class="left-message-content">
+                    <%= content %>
+                </div>
+            </div>
+        </div>
+    </script>
+    <script id="right-message-template" type="text/template">
+        <div class="right-message-row">
+            <div class="message">
+                <div class="right-message-content">
+                    <%= content %>
+                </div>
+                <div class="right-direction"></div>
+            </div>
+            <div class="avatar">
+                <div class="avatar-img">
+                    <img src="/img/myavatar.jpg" alt="">
+                </div>
+                <div class="avatar-name">
+                    <span><%= name %></span>
+                </div>
+            </div>
+        </div>
+    </script>
 </head>
 <body>
     <div class="container">
@@ -64,7 +100,7 @@
     <script src="/socket.io/socket.io.js" type="text/javascript"></script>
     <script src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script>
     <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <!--<script src="/js/ejs.min.js"></script>-->
+    <script src="/js/ejs.min.js"></script>
     <script src="/js/chat.js" type="text/javascript"></script>
     <script src="/js/chat_ui.js" type="text/javascript"></script>
 </body>
