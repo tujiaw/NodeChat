@@ -11,10 +11,10 @@
         <div class="left-message-row">
             <div class="avatar">
                 <div class="avatar-img">
-                    <img src="/img/myavatar.jpg" alt="">
+                    <img src="<%= avatar %>" alt="">
                 </div>
-                <div class="avatar-name">
-                    <span><%= name %></span>
+                <div class="avatar-name" data-toggle="tooltip" title="<%= name %>">
+                    <%= name %>
                 </div>
             </div>
             <div class="message">
@@ -35,10 +35,10 @@
             </div>
             <div class="avatar">
                 <div class="avatar-img">
-                    <img src="/img/myavatar.jpg" alt="">
+                    <img src="<%= avatar %>" alt="">
                 </div>
                 <div class="avatar-name">
-                    <span><%= name %></span>
+                    <span data-toggle="tooltip" title="<%= name %>"><%= name %></span>
                 </div>
             </div>
         </div>
@@ -83,11 +83,23 @@
     <div id="mask">
         <div class="col-sm-3"></div>
         <div class="col-sm-6">
-            <div class="input-group">
-                <input id="input-name" type="text" class="form-control" placeholder="给自己取个响亮的名字" aria-describedby="sizing-addon1">
-                <span class="input-group-btn">
-                    <button id="go" class="btn btn-default" type="button">Go!</button>
-                </span>
+            <div class="row avatar-list">
+                <ul>
+                    <li><img src="/img/1.png" class="img-circle avatar-img"></li>
+                    <li><img src="/img/2.png" class="img-circle avatar-img"></li>
+                    <li><img src="/img/3.png" class="img-circle avatar-img"></li>
+                    <li><img src="/img/4.png" class="img-circle avatar-img"></li>
+                    <li><img src="/img/5.png" class="img-circle avatar-img"></li>
+                    <li><img src="/img/6.png" class="img-circle avatar-img"></li>
+                </ul>
+            </div>
+            <div class="row">
+                <div class="input-group">
+                    <input id="input-name" type="text" class="form-control" placeholder="给自己取个响亮的名字" aria-describedby="sizing-addon1">
+                    <span class="input-group-btn">
+                        <button id="go" class="btn btn-default" type="button">Go!</button>
+                    </span>
+                </div>
             </div>
         </div>
         <div class="col-sm-3"></div>

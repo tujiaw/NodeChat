@@ -2,6 +2,10 @@
  * Created by jiawei.tu on 12/31 0031.
  */
 
+var prevDate = new Date();
+prevDate.setFullYear(2016);
+var currentUser;
+
 function log(msg) {
     if ($('#debuglog').length == 0) {
         $('body').append($('<div id="debuglog"><hr></div>'));
@@ -23,16 +27,13 @@ function formatDate(d) {
     return `${d.getFullYear()}/${month}/${date} ${hours}:${minutes}:${seconds}`;
 }
 
-var prevDate = new Date();
-prevDate.setFullYear(2016);
-
 function processUserInput(chatApp, socket) {
     var message = $('#send-message').val();
     processSysCommand(chatApp, socket, message);
 }
 
 // "send", "receive", "system"
-function appendMessage(message, type) {
+function appendMessage(type, user, message) {
     var curDate = new Date();
     var msInterval = curDate.getTime() - prevDate.getTime();
     if (msInterval > 60 * 1000) {
@@ -42,19 +43,18 @@ function appendMessage(message, type) {
 
     if (type === 'send') {
         var html = ejs.render($('#right-message-template').html(), {
-            name: $('#username').text(),
+            name: user.name,
+            avatar: user.avatar,
             content: message
         });
         $('#messages').append(html);
     } else if (type === 'receive') {
-        var strList = message.split('：');
-        if (strList.length > 1) {
-            var html = ejs.render($('#left-message-template').html(), {
-                name: strList[0],
-                content: strList[1]
-            });
-            $('#messages').append(html);
-        }
+        var html = ejs.render($('#left-message-template').html(), {
+            name: user.name,
+            avatar: user.avatar,
+            content: message
+        });
+        $('#messages').append(html);
     } else if (type === 'system') {
         $('#messages').append($('<div class="msg sys-msg"></div>').text(message));
     }
@@ -68,11 +68,11 @@ function processSysCommand(chatApp, socket, message) {
     if (message[0] == '/') {
         var systemMessage = chatApp.processCommand(message);
         if (systemMessage) {
-            appendMessage(systemMessage, 'system');
+            appendMessage('system', currentUser, systemMessage);
         }
     } else {
         chatApp.sendMessage($('#roomname').text(), message);
-        appendMessage(message, 'send');
+        appendMessage('send', currentUser, message);
     }
     $('#send-message').val('');
 }
@@ -81,18 +81,19 @@ $(document).ready(function() {
     var socket, chatApp;
     var commandList = [];
 
-    function initChat(name) {
-        if (name.length === 0) {
+    function initChat(user) {
+        if (user.name.length === 0 || user.avatar.length === 0) {
             return;
         }
         socket = io.connect();
-        chatApp = new Chat(socket);
-        socket.emit('initJoin', name);
+        chatApp = new Chat(socket, user);
+        currentUser = user;
+        socket.emit('initJoin', user);
         socket.on('initJoinResponse', function(result) {
             if (result.success) {
                 $('#mask').hide();
                 $('#send-message').focus();
-                $('#username').text(name);
+                $('#username').text(user.name);
             } else {
                 alert(result.message);
             }
@@ -100,21 +101,22 @@ $(document).ready(function() {
         socket.on('nameResult', function(result) {
             var message;
             if (result.success) {
+                currentUser.name = result.name;
                 message = '您当前的用户名为：' + result.name;
+                $('#username').text(result.name);
             } else {
                 message = result.message;
             }
-            $('#username').text(result.name);
-            appendMessage(message, 'system');
+            appendMessage('system', currentUser, message);
         });
 
         socket.on('joinResult', function(result) {
             $('#roomname').text(result.room);
-            appendMessage('您加入了聊天室', 'system');
+            appendMessage('system', currentUser, '您加入了聊天室');
         });
 
-        socket.on('message', function(message) {
-            appendMessage(message.text, message.type);
+        socket.on('message', function(result) {
+            appendMessage(result.type, result.user, result.message);
         });
 
         socket.on('onlineCount', function(result) {
@@ -130,14 +132,27 @@ $(document).ready(function() {
     });
 
     /////////////////给自己取一个响亮的名字///////////////
+    function getInitUser() {
+        let user = {
+            avatar: '/img/1.png',
+            name: $('#input-name').val()
+        };
+        $('.avatar-img').each(function() {
+            if ($(this).hasClass('selected')) {
+                user.avatar = $(this).attr('src');
+                return false;
+            }
+        })
+        return user;
+    }
     $('#input-name').bind('keydown', function(event) {
         if (event.keyCode != '13') {
             return;
         }
-        initChat($(this).val());
+        initChat(getInitUser());
     });
     $('#go').on('click', function() {
-        initChat($('#input-name').val());
+        initChat(getInitUser());
     });
     $('#input-name').focus();
     ////////////////////////////////////////////////////
@@ -149,5 +164,14 @@ $(document).ready(function() {
             processSysCommand(chatApp, socket, `/nick ${newName}`);
         }
         $('#send-message').focus();
+    })
+
+    $('.avatar-img').on('click', function() {
+        $('.avatar-img').each(function() {
+            $(this).css('border', '');
+            $(this).removeClass('selected');
+        })
+        $(this).css('border', '2px solid #F0DB4F');
+        $(this).addClass('selected');
     })
 });
