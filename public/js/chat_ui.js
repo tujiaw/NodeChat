@@ -25,6 +25,11 @@ function formatDate(d) {
     return `${d.getFullYear()}/${month}/${date} ${hours}:${minutes}:${seconds}`;
 }
 
+function rd(n, m){
+    var c = m-n+1;  
+    return Math.floor(Math.random() * c + n);
+}
+
 $(document).ready(function() {
     var socket, chatApp;
     var currentUser;
@@ -145,6 +150,7 @@ $(document).ready(function() {
         })
         return user;
     }
+
     $('#input-name').bind('keydown', function(event) {
         if (event.keyCode != '13') {
             return;
@@ -165,7 +171,14 @@ $(document).ready(function() {
         $(this).addClass('selected');
     });
 
-    $('#input-name').focus();
+    (function initUser() {
+        const imgCount = $('.avatar-img').length;
+        const randAvatar = rd(1, imgCount);
+        $('.avatar-img').eq(randAvatar - 1).click();
+        const randName = Math.random().toString(36).substr(2).slice(2, 7); 
+        $('#input-name').val(randName);
+        $('#input-name').focus();
+    })();
     ////////////////////////////////////////////////////
 
     // 修改用户名
