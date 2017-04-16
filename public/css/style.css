@@ -80,12 +80,14 @@ a {
     border-radius: 5px;
     padding: 10px;
     margin-top:4px;
+    margin-right: 4px;
 }
 .right-message-content {
     background: #A6D4F2;
     border-radius: 5px;
     padding: 10px;
     margin-top: 4px;
+    margin-left: 4px;
 }
 .left-direction {
     border: solid transparent;
