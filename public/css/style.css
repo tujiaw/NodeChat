@@ -8,7 +8,7 @@ a {
 
 #messages {
     overflow-x: hidden;
-    height: 350px;
+    height: 500px;
     padding-right: 10px;
 }
 
@@ -138,6 +138,8 @@ a {
     text-overflow:ellipsis;
     -o-text-overflow:ellipsis;
 }
+/*chat-message-template*/
+
 /*选择头像*/
 .avatar-list li {
     list-style: none;
