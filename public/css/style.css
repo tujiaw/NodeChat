@@ -9,7 +9,8 @@ a {
 #messages {
     overflow-x: hidden;
     height: 400px;
-    padding-right: 10px;
+    padding-left: 6px;
+    padding-right: 6px;
 }
 
 #help {
@@ -80,14 +81,12 @@ a {
     border-radius: 5px;
     padding: 10px;
     margin-top:4px;
-    margin-right: 4px;
 }
 .right-message-content {
     background: #A6D4F2;
     border-radius: 5px;
     padding: 10px;
     margin-top: 4px;
-    margin-left: 4px;
 }
 .left-direction {
     border: solid transparent;
