@@ -2,9 +2,7 @@
  * Created by jiawei.tu on 12/31 0031.
  */
 
-var prevDate = new Date();
-prevDate.setFullYear(2016);
-var currentUser;
+
 
 function log(msg) {
     if ($('#debuglog').length == 0) {
@@ -27,59 +25,11 @@ function formatDate(d) {
     return `${d.getFullYear()}/${month}/${date} ${hours}:${minutes}:${seconds}`;
 }
 
-function processUserInput(chatApp, socket) {
-    var message = $('#send-message').val();
-    processSysCommand(chatApp, socket, message);
-}
-
-// "send", "receive", "system"
-function appendMessage(type, user, message) {
-    var curDate = new Date();
-    var msInterval = curDate.getTime() - prevDate.getTime();
-    if (msInterval > 60 * 1000) {
-        prevDate = curDate;
-        $('#messages').append($('<div class="msg date-msg"></div>').text(formatDate(curDate)));
-    }
-
-    if (type === 'send') {
-        var html = ejs.render($('#right-message-template').html(), {
-            name: user.name,
-            avatar: user.avatar,
-            content: message
-        });
-        $('#messages').append(html);
-    } else if (type === 'receive') {
-        var html = ejs.render($('#left-message-template').html(), {
-            name: user.name,
-            avatar: user.avatar,
-            content: message
-        });
-        $('#messages').append(html);
-    } else if (type === 'system') {
-        $('#messages').append($('<div class="msg sys-msg"></div>').text(message));
-    }
-    $('#messages').scrollTop($('#messages').prop('scrollHeight'));
-}
-
-function processSysCommand(chatApp, socket, message) {
-    if (message.length == 0) {
-        return;
-    }
-    if (message[0] == '/') {
-        var systemMessage = chatApp.processCommand(message);
-        if (systemMessage) {
-            appendMessage('system', currentUser, systemMessage);
-        }
-    } else {
-        chatApp.sendMessage($('#roomname').text(), message);
-        appendMessage('send', currentUser, message);
-    }
-    $('#send-message').val('');
-}
-
 $(document).ready(function() {
     var socket, chatApp;
-    var commandList = [];
+    var currentUser;
+    var prevDate = new Date();
+    prevDate.setFullYear(2016);
 
     function initChat(user) {
         if (user.name.length === 0 || user.avatar.length === 0) {
@@ -124,6 +74,56 @@ $(document).ready(function() {
         });
     }
 
+    function processUserInput(chatApp, socket) {
+        var message = $('#send-message').val();
+        processSysCommand(chatApp, socket, message);
+    }
+
+    // "send", "receive", "system"
+    function appendMessage(type, user, message) {
+        var curDate = new Date();
+        var msInterval = curDate.getTime() - prevDate.getTime();
+        if (msInterval > 60 * 1000) {
+            prevDate = curDate;
+            $('#messages').append($('<div class="msg date-msg"></div>').text(formatDate(curDate)));
+        }
+
+        if (type === 'send') {
+            var html = ejs.render($('#right-message-template').html(), {
+                name: user.name,
+                avatar: user.avatar,
+                content: message
+            });
+            $('#messages').append(html);
+        } else if (type === 'receive') {
+            var html = ejs.render($('#left-message-template').html(), {
+                name: user.name,
+                avatar: user.avatar,
+                content: message
+            });
+            $('#messages').append(html);
+        } else if (type === 'system') {
+            $('#messages').append($('<div class="msg sys-msg"></div>').text(message));
+        }
+        $('#messages').scrollTop($('#messages').prop('scrollHeight'));
+    }
+
+    function processSysCommand(chatApp, socket, message) {
+        if (message.length == 0) {
+            return;
+        }
+        if (message[0] == '/') {
+            var systemMessage = chatApp.processCommand(message);
+            if (systemMessage) {
+                appendMessage('system', currentUser, systemMessage);
+            }
+        } else {
+            chatApp.sendMessage($('#roomname').text(), message);
+            appendMessage('send', currentUser, message);
+        }
+        $('#send-message').val('');
+    }
+
     // 发送消息
     $('#send-form').submit(function() {
         processUserInput(chatApp, socket);
@@ -131,7 +131,7 @@ $(document).ready(function() {
         return false;
     });
 
-    /////////////////给自己取一个响亮的名字///////////////
+    /////////////////用户名和头像初始化///////////////
     function getInitUser() {
         let user = {
             avatar: '/img/1.png',
@@ -154,6 +154,17 @@ $(document).ready(function() {
     $('#go').on('click', function() {
         initChat(getInitUser());
     });
+
+    // 头像选择
+    $('.avatar-img').on('click', function() {
+        $('.avatar-img').each(function() {
+            $(this).css('border', '');
+            $(this).removeClass('selected');
+        })
+        $(this).css('border', '2px solid #F0DB4F');
+        $(this).addClass('selected');
+    });
+
     $('#input-name').focus();
     ////////////////////////////////////////////////////
 
@@ -164,14 +175,5 @@ $(document).ready(function() {
             processSysCommand(chatApp, socket, `/nick ${newName}`);
         }
         $('#send-message').focus();
-    })
-
-    $('.avatar-img').on('click', function() {
-        $('.avatar-img').each(function() {
-            $(this).css('border', '');
-            $(this).removeClass('selected');
-        })
-        $(this).css('border', '2px solid #F0DB4F');
-        $(this).addClass('selected');
-    })
+    });
 });
